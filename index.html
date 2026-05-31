@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0a0a0f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Summer Grind 2026</title>
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface2: #1a1a26;
+    --border: #2a2a3d;
+    --accent: #f5c842;
+    --accent2: #ff4d4d;
+    --accent3: #4dff9e;
+    --text: #e8e8f0;
+    --text-muted: #6b6b8a;
+    --font-display: 'Bebas Neue', sans-serif;
+    --font-mono: 'Space Mono', monospace;
+    --font-body: 'DM Sans', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Noise texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  .app { position: relative; z-index: 1; max-width: 480px; margin: 0 auto; padding: 16px; }
+
+  /* HEADER */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+    padding-top: 8px;
+  }
+  .header-left h1 {
+    font-family: var(--font-display);
+    font-size: 3.2rem;
+    line-height: 0.9;
+    letter-spacing: 2px;
+    background: linear-gradient(135deg, var(--accent) 0%, #ff9f43 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .header-left .subtitle {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    letter-spacing: 3px;
+    margin-top: 4px;
+    text-transform: uppercase;
+  }
+  .date-badge {
+    text-align: right;
+  }
+  .date-badge .day-num {
+    font-family: var(--font-display);
+    font-size: 2.4rem;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .date-badge .day-label {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* PROGRESS BAR */
+  .summer-progress {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+  }
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .progress-track {
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), #ff9f43);
+    border-radius: 2px;
+    transition: width 0.8s ease;
+  }
+
+  /* STREAK */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px;
+    text-align: center;
+  }
+  .stat-card .val {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    line-height: 1;
+    color: var(--accent);
+  }
+  .stat-card .lbl {
+    font-family: var(--font-mono);
+    font-size: 0.55rem;
+    color: var(--text-muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+  .stat-card.red .val { color: var(--accent2); }
+  .stat-card.green .val { color: var(--accent3); }
+
+  /* SECTION TITLE */
+  .section-title {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* GOAL CARDS */
+  .goals-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+
+  .goal-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+    position: relative;
+    overflow: hidden;
+  }
+  .goal-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--border);
+    transition: background 0.3s;
+  }
+  .goal-card:active { transform: scale(0.98); }
+  .goal-card.done { border-color: rgba(77, 255, 158, 0.2); background: rgba(77,255,158,0.04); }
+  .goal-card.done::before { background: var(--accent3); }
+  .goal-card.failed { border-color: rgba(255, 77, 77, 0.2); background: rgba(255,77,77,0.04); }
+  .goal-card.failed::before { background: var(--accent2); }
+  .goal-card.na { opacity: 0.4; cursor: not-allowed; }
+  .goal-card.na::before { background: var(--text-muted); }
+
+  .goal-check {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s;
+    font-size: 0.85rem;
+  }
+  .goal-card.done .goal-check { border-color: var(--accent3); background: rgba(77,255,158,0.15); }
+  .goal-card.failed .goal-check { border-color: var(--accent2); background: rgba(255,77,77,0.15); }
+
+  .goal-info { flex: 1; min-width: 0; }
+  .goal-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .goal-detail {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-top: 2px;
+    font-family: var(--font-mono);
+  }
+
+  .goal-actions {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .btn-sm {
+    padding: 5px 10px;
+    border-radius: 6px;
+    border: 1px solid;
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-transform: uppercase;
+  }
+  .btn-pass { border-color: var(--accent3); color: var(--accent3); background: transparent; }
+  .btn-pass:hover { background: rgba(77,255,158,0.1); }
+  .btn-fail { border-color: var(--accent2); color: var(--accent2); background: transparent; }
+  .btn-fail:hover { background: rgba(255,77,77,0.1); }
+  .btn-undo { border-color: var(--text-muted); color: var(--text-muted); background: transparent; }
+  .btn-undo:hover { background: rgba(255,255,255,0.05); }
+
+  /* PUNISHMENTS SECTION */
+  .punishments-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
+
+  .punishment-card {
+    background: linear-gradient(135deg, rgba(255,77,77,0.08), rgba(255,77,77,0.02));
+    border: 1px solid rgba(255,77,77,0.25);
+    border-radius: 10px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .punishment-icon { font-size: 1.3rem; flex-shrink: 0; }
+  .punishment-info { flex: 1; }
+  .punishment-title {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--accent2);
+  }
+  .punishment-source {
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    margin-top: 2px;
+  }
+  .punishment-for {
+    font-size: 0.65rem;
+    color: rgba(255,77,77,0.6);
+    font-family: var(--font-mono);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-top: 3px;
+  }
+  .btn-complete-punishment {
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--accent3);
+    color: var(--accent3);
+    background: transparent;
+    font-family: var(--font-mono);
+    font-size: 0.58rem;
+    cursor: pointer;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    flex-shrink: 0;
+  }
+  .btn-complete-punishment:hover { background: rgba(77,255,158,0.1); }
+
+  .no-punishments {
+    text-align: center;
+    padding: 20px;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--accent3);
+    letter-spacing: 2px;
+    border: 1px dashed rgba(77,255,158,0.2);
+    border-radius: 10px;
+  }
+
+  /* SUBMIT BUTTON */
+  .submit-btn {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, var(--accent), #ff9f43);
+    color: #0a0a0f;
+    border: none;
+    border-radius: 12px;
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    letter-spacing: 3px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 20px;
+  }
+  .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(245,200,66,0.25); }
+  .submit-btn:active { transform: translateY(0); }
+  .submit-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  /* HISTORY */
+  .history-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 32px; }
+  .history-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+  .history-item:hover { border-color: var(--accent); }
+  .history-date {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text);
+  }
+  .history-score {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .score-dots { display: flex; gap: 3px; }
+  .score-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+  }
+  .score-dot.pass { background: var(--accent3); }
+  .score-dot.fail { background: var(--accent2); }
+  .score-dot.na { background: var(--text-muted); opacity: 0.4; }
+  .history-pct {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    color: var(--text-muted);
+  }
+
+  /* MODAL */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(6px);
+    z-index: 100;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  .modal-overlay.active { opacity: 1; pointer-events: all; }
+  .modal {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px 20px 0 0;
+    padding: 24px 20px 40px;
+    width: 100%;
+    max-width: 480px;
+    transform: translateY(100%);
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .modal-overlay.active .modal { transform: translateY(0); }
+  .modal-handle {
+    width: 36px; height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    margin: 0 auto 20px;
+  }
+  .modal-title {
+    font-family: var(--font-display);
+    font-size: 1.8rem;
+    color: var(--accent);
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+  .modal-subtitle {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+  .modal-punishment-reveal {
+    background: linear-gradient(135deg, rgba(255,77,77,0.1), rgba(255,77,77,0.03));
+    border: 1px solid rgba(255,77,77,0.3);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .modal-punishment-reveal .punishment-emoji { font-size: 2.5rem; margin-bottom: 8px; }
+  .modal-punishment-reveal .punishment-name {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    color: var(--accent2);
+    letter-spacing: 2px;
+  }
+  .modal-punishment-reveal .punishment-desc {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-top: 6px;
+  }
+  .modal-btn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 10px;
+    border: none;
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+    cursor: pointer;
+    margin-bottom: 8px;
+    transition: all 0.2s;
+  }
+  .modal-btn.primary { background: var(--accent2); color: white; }
+  .modal-btn.secondary { background: transparent; border: 1px solid var(--border); color: var(--text-muted); }
+  .modal-btn:hover { opacity: 0.85; }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 4px;
+    margin-bottom: 20px;
+  }
+  .tab {
+    flex: 1;
+    padding: 8px;
+    border: none;
+    border-radius: 7px;
+    background: transparent;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .tab.active { background: var(--surface2); color: var(--accent); border: 1px solid var(--border); }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* Day off banner */
+  .day-off-banner {
+    background: var(--surface);
+    border: 1px dashed var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .day-off-banner .icon { font-size: 2.5rem; margin-bottom: 8px; }
+  .day-off-banner .title { font-family: var(--font-display); font-size: 1.4rem; color: var(--text-muted); letter-spacing: 2px; }
+  .day-off-banner .desc { font-size: 0.75rem; color: var(--text-muted); margin-top: 6px; }
+
+  /* Already submitted */
+  .submitted-banner {
+    background: rgba(77,255,158,0.05);
+    border: 1px solid rgba(77,255,158,0.2);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+    margin-bottom: 16px;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--accent3);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .empty-history {
+    text-align: center;
+    padding: 40px 20px;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    letter-spacing: 2px;
+  }
+
+  /* Savings tracker */
+  .savings-input-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-top: 6px;
+  }
+  .savings-input {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    padding: 8px 10px;
+    width: 100px;
+    outline: none;
+  }
+  .savings-input:focus { border-color: var(--accent); }
+  .savings-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+
+  /* Notification badge */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--accent2);
+    color: white;
+    border-radius: 10px;
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    padding: 2px 6px;
+    margin-left: 6px;
+    font-weight: bold;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .goal-card { animation: slideIn 0.3s ease both; }
+  .goal-card:nth-child(1) { animation-delay: 0.05s; }
+  .goal-card:nth-child(2) { animation-delay: 0.1s; }
+  .goal-card:nth-child(3) { animation-delay: 0.15s; }
+  .goal-card:nth-child(4) { animation-delay: 0.2s; }
+  .goal-card:nth-child(5) { animation-delay: 0.25s; }
+  .goal-card:nth-child(6) { animation-delay: 0.3s; }
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-left">
+      <h1>SUMMER<br>GRIND</h1>
+      <div class="subtitle">JUN 1 — SEP 1 · 2026</div>
+    </div>
+    <div class="date-badge">
+      <div class="day-num" id="dayNum">—</div>
+      <div class="day-label" id="dayLabel">TODAY</div>
+      <div class="day-label" id="weekdayLabel" style="margin-top:2px"></div>
+    </div>
+  </div>
+
+  <!-- SUMMER PROGRESS -->
+  <div class="summer-progress">
+    <div class="progress-label">
+      <span>SUMMER PROGRESS</span>
+      <span id="progressPct">0%</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill" style="width:0%"></div>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-card green">
+      <div class="val" id="streakVal">0</div>
+      <div class="lbl">🔥 STREAK</div>
+    </div>
+    <div class="stat-card">
+      <div class="val" id="perfectVal">0</div>
+      <div class="lbl">✅ PERFECT</div>
+    </div>
+    <div class="stat-card red">
+      <div class="val" id="failsVal">0</div>
+      <div class="lbl">💀 FAILS</div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('today')">TODAY</button>
+    <button class="tab" onclick="switchTab('punishments')">
+      PUNISH
+      <span class="badge" id="punishBadge" style="display:none">0</span>
+    </button>
+    <button class="tab" onclick="switchTab('history')">LOG</button>
+  </div>
+
+  <!-- TODAY TAB -->
+  <div class="tab-content active" id="tab-today">
+    <div id="todayContent"></div>
+  </div>
+
+  <!-- PUNISHMENTS TAB -->
+  <div class="tab-content" id="tab-punishments">
+    <div class="section-title">ACTIVE PUNISHMENTS</div>
+    <div id="punishmentsList"></div>
+  </div>
+
+  <!-- HISTORY TAB -->
+  <div class="tab-content" id="tab-history">
+    <div class="section-title">DAILY LOG</div>
+    <div id="historyList"></div>
+  </div>
+</div>
+
+<!-- FAIL MODAL -->
+<div class="modal-overlay" id="failModal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">PENALTY ASSIGNED</div>
+    <div class="modal-subtitle" id="modalSubtitle">You failed a goal. Own it.</div>
+    <div class="modal-punishment-reveal" id="modalPunishReveal"></div>
+    <button class="modal-btn primary" onclick="closeModal()">GOT IT. I'LL DO IT.</button>
+    <button class="modal-btn secondary" onclick="closeModal()">Dismiss</button>
+  </div>
+</div>
+
+<!-- DAY REVIEW MODAL -->
+<div class="modal-overlay" id="reviewModal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="reviewTitle">DAY COMPLETE</div>
+    <div class="modal-subtitle" id="reviewSubtitle"></div>
+    <div id="reviewDetails" style="margin-bottom:20px"></div>
+    <button class="modal-btn primary" onclick="closeReviewModal()">LOCK IT IN</button>
+  </div>
+</div>
+
+<script>
+// ============ DATA ============
+const SUMMER_START = new Date('2026-06-01');
+const SUMMER_END = new Date('2026-09-01');
+
+const GOALS = [
+  {
+    id: 'workout',
+    name: 'Workout',
+    detail: 'Every weekday',
+    icon: '💪',
+    weekdaysOnly: true,
+    type: 'check'
+  },
+  {
+    id: 'calories',
+    name: '3500 Calories',
+    detail: 'Goal: 160lb',
+    icon: '🍗',
+    weekdaysOnly: false,
+    type: 'check'
+  },
+  {
+    id: 'sleep',
+    name: 'Bedtime',
+    detail: 'Sun–Thu 10:30pm | Fri–Sat 12am',
+    icon: '🌙',
+    weekdaysOnly: false,
+    type: 'check'
+  },
+  {
+    id: 'savings',
+    name: 'Savings',
+    detail: '$4,000 target by Sep 1',
+    icon: '💰',
+    weekdaysOnly: false,
+    type: 'savings'
+  },
+  {
+    id: 'bible',
+    name: 'Read Bible',
+    detail: 'Daily reading',
+    icon: '📖',
+    weekdaysOnly: false,
+    type: 'check'
+  },
+  {
+    id: 'nofap',
+    name: 'Stay Clean',
+    detail: 'No masturbating',
+    icon: '🔒',
+    weekdaysOnly: false,
+    type: 'check'
+  }
+];
+
+const PUNISHMENTS = [
+  { id: 'family', name: '2hr Family Time', desc: 'Put the phone down. Be present with family for 2 full hours.', icon: '👨‍👩‍👧', duration: '2 hours' },
+  { id: 'nosocial', name: 'No Social Media', desc: 'Calls and necessary messages ONLY for the entire day.', icon: '📵', duration: '1 day' },
+  { id: 'run5', name: '5 Mile Run', desc: 'Lace up. No shortcuts. Track it.', icon: '🏃', duration: 'One session' },
+  { id: 'cleanroom', name: 'Clean Your Room', desc: 'Full clean: vacuum, organize, wipe surfaces. No half-measures.', icon: '🧹', duration: '1-2 hours' },
+  { id: 'fine20', name: '$20 Fine', desc: 'Transfer $20 to your savings account right now.', icon: '💸', duration: 'Immediate' },
+  { id: 'novideogames', name: 'No Video Games', desc: 'Zero gaming for the next 3 days. Period.', icon: '🎮', duration: '3 days' },
+  { id: 'coldbath', name: 'Cold Shower', desc: 'Full 5-minute cold shower. No warm water.', icon: '🚿', duration: '5 minutes' },
+  { id: 'pushups', name: '100 Pushups', desc: 'Today. Can be broken into sets, must be done before bed.', icon: '🤸', duration: 'Today' },
+  { id: 'nophone', name: 'No Phone Till Noon', desc: 'Phone off and in a drawer until 12pm tomorrow.', icon: '📱', duration: 'Until noon' },
+  { id: 'journal', name: 'Accountability Write-Up', desc: 'Write a 1-page journal entry about why you failed and how you\'ll fix it.', icon: '✍️', duration: '30 minutes' },
+  { id: 'extraworkout', name: 'Bonus Workout', desc: 'Extra 45-min workout session in addition to your regular one.', icon: '🏋️', duration: '45 minutes' },
+  { id: 'earlyrise', name: '5am Wake-Up', desc: 'Set your alarm for 5am tomorrow. No snooze.', icon: '⏰', duration: 'Tomorrow' },
+];
+
+// ============ STATE ============
+let state = loadState();
+
+function loadState() {
+  const saved = localStorage.getItem('summerGrind2026');
+  if (saved) return JSON.parse(saved);
+  return {
+    days: {},          // keyed by YYYY-MM-DD
+    totalSaved: 0,
+    activePunishments: []  // { id, punishmentId, goalId, assignedDate, forDate }
+  };
+}
+
+function saveState() {
+  localStorage.setItem('summerGrind2026', JSON.stringify(state));
+}
+
+// ============ HELPERS ============
+function todayStr() {
+  const now = new Date();
+  return now.toISOString().split('T')[0];
+}
+
+function dateStr(d) {
+  return d.toISOString().split('T')[0];
+}
+
+function parseDateStr(s) {
+  return new Date(s + 'T00:00:00');
+}
+
+function isWeekend(dateString) {
+  const d = parseDateStr(dateString);
+  const day = d.getDay();
+  return day === 0 || day === 6; // Sunday or Saturday
+}
+
+function isWeekday(dateString) {
+  return !isWeekend(dateString);
+}
+
+function getSummerDay(dateString) {
+  const d = parseDateStr(dateString);
+  const diff = d - SUMMER_START;
+  return Math.floor(diff / (1000*60*60*24)) + 1;
+}
+
+function isInSummer(dateString) {
+  const d = parseDateStr(dateString);
+  return d >= SUMMER_START && d < SUMMER_END;
+}
+
+function formatDate(dateString) {
+  const d = parseDateStr(dateString);
+  return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+}
+
+function getWeekdayName(dateString) {
+  const d = parseDateStr(dateString);
+  return d.toLocaleDateString('en-US', { weekday: 'long' });
+}
+
+function isGoalApplicable(goal, dateString) {
+  if (goal.weekdaysOnly && !isWeekday(dateString)) return false;
+  return true;
+}
+
+function randomPunishment(excludeIds = []) {
+  const available = PUNISHMENTS.filter(p => !excludeIds.includes(p.id));
+  return available[Math.floor(Math.random() * available.length)];
+}
+
+function getBedtimeLabel(dateString) {
+  const d = parseDateStr(dateString);
+  const day = d.getDay();
+  // Friday=5, Saturday=6
+  if (day === 5 || day === 6) return '12:00am';
+  return '10:30pm';
+}
+
+function getDayData(dateString) {
+  if (!state.days[dateString]) {
+    state.days[dateString] = { goals: {}, submitted: false, savingsAmount: 0 };
+  }
+  return state.days[dateString];
+}
+
+// ============ STATS ============
+function calcStats() {
+  const today = todayStr();
+  let streak = 0;
+  let perfect = 0;
+  let totalFails = 0;
+
+  // Count all submitted days
+  const submittedDays = Object.keys(state.days)
+    .filter(d => state.days[d].submitted && isInSummer(d))
+    .sort();
+
+  for (const d of submittedDays) {
+    const dayData = state.days[d];
+    const applicableGoals = GOALS.filter(g => isGoalApplicable(g, d));
+    const fails = applicableGoals.filter(g => dayData.goals[g.id] === 'fail').length;
+    totalFails += fails;
+    if (fails === 0) perfect++;
+  }
+
+  // Streak: consecutive submitted days (from today backwards) with 0 fails
+  const sortedDesc = [...submittedDays].reverse();
+  for (const d of sortedDesc) {
+    const dayData = state.days[d];
+    const applicableGoals = GOALS.filter(g => isGoalApplicable(g, d));
+    const fails = applicableGoals.filter(g => dayData.goals[g.id] === 'fail').length;
+    if (fails === 0) streak++;
+    else break;
+  }
+
+  return { streak, perfect, fails: totalFails };
+}
+
+function calcSummerProgress() {
+  const today = new Date();
+  if (today < SUMMER_START) return 0;
+  if (today >= SUMMER_END) return 100;
+  const total = SUMMER_END - SUMMER_START;
+  const elapsed = today - SUMMER_START;
+  return Math.round((elapsed / total) * 100);
+}
+
+// ============ RENDER ============
+function render() {
+  const today = todayStr();
+  const inSummer = isInSummer(today);
+  const dayNum = inSummer ? getSummerDay(today) : '—';
+  const weekday = getWeekdayName(today);
+
+  // Header
+  document.getElementById('dayNum').textContent = inSummer ? `D${dayNum}` : '—';
+  document.getElementById('weekdayLabel').textContent = weekday.toUpperCase();
+
+  // Progress
+  const pct = calcSummerProgress();
+  document.getElementById('progressPct').textContent = pct + '%';
+  document.getElementById('progressFill').style.width = pct + '%';
+
+  // Stats
+  const stats = calcStats();
+  document.getElementById('streakVal').textContent = stats.streak;
+  document.getElementById('perfectVal').textContent = stats.perfect;
+  document.getElementById('failsVal').textContent = stats.fails;
+
+  // Punishment badge
+  const activePunish = state.activePunishments.filter(p => !p.completed);
+  const badge = document.getElementById('punishBadge');
+  if (activePunish.length > 0) {
+    badge.style.display = 'inline-flex';
+    badge.textContent = activePunish.length;
+  } else {
+    badge.style.display = 'none';
+  }
+
+  renderToday(today, inSummer);
+  renderPunishments();
+  renderHistory();
+}
+
+function renderToday(today, inSummer) {
+  const container = document.getElementById('todayContent');
+  const dayData = getDayData(today);
+
+  if (!inSummer) {
+    const start = today < dateStr(SUMMER_START);
+    container.innerHTML = `
+      <div class="day-off-banner">
+        <div class="icon">${start ? '⏳' : '🏆'}</div>
+        <div class="title">${start ? 'NOT STARTED YET' : 'SUMMER COMPLETE'}</div>
+        <div class="desc">${start ? 'Summer grind begins June 1st, 2026.' : 'You made it through the summer!'}</div>
+      </div>
+    `;
+    return;
+  }
+
+  let html = '';
+
+  if (dayData.submitted) {
+    html += `<div class="submitted-banner">✅ TODAY LOGGED · ${formatDate(today)}</div>`;
+  }
+
+  html += `<div class="section-title">TODAY'S GOALS · ${formatDate(today)}</div>`;
+  html += `<div class="goals-list" id="goalsList">`;
+
+  for (const goal of GOALS) {
+    const applicable = isGoalApplicable(goal, today);
+    const status = dayData.goals[goal.id] || 'pending';
+    const bedtime = goal.id === 'sleep' ? getBedtimeLabel(today) : null;
+    const detail = bedtime ? `By ${bedtime}` : goal.detail;
+
+    let cardClass = '';
+    let checkContent = '';
+    if (!applicable) { cardClass = 'na'; checkContent = '—'; }
+    else if (status === 'pass') { cardClass = 'done'; checkContent = '✓'; }
+    else if (status === 'fail') { cardClass = 'failed'; checkContent = '✗'; }
+
+    let actionsHtml = '';
+    if (applicable && !dayData.submitted) {
+      if (status === 'pending') {
+        actionsHtml = `
+          <div class="goal-actions">
+            <button class="btn-sm btn-pass" onclick="markGoal('${goal.id}', 'pass')">PASS</button>
+            <button class="btn-sm btn-fail" onclick="markGoal('${goal.id}', 'fail')">FAIL</button>
+          </div>`;
+      } else {
+        actionsHtml = `
+          <div class="goal-actions">
+            <button class="btn-sm btn-undo" onclick="markGoal('${goal.id}', 'pending')">UNDO</button>
+          </div>`;
+      }
+    }
+
+    let extraInput = '';
+    if (goal.id === 'savings' && applicable && !dayData.submitted) {
+      extraInput = `<div class="savings-input-row">
+        <span class="savings-label">Total saved: $</span>
+        <input class="savings-input" type="number" id="savingsInput" placeholder="0" 
+          value="${state.totalSaved || 0}" 
+          onchange="updateSavings(this.value)" min="0" max="4000">
+        <span class="savings-label">/ $4,000</span>
+      </div>`;
+    } else if (goal.id === 'savings' && applicable) {
+      extraInput = `<div class="goal-detail" style="margin-top:4px">Total saved: $${state.totalSaved || 0} / $4,000</div>`;
+    }
+
+    html += `
+      <div class="goal-card ${cardClass}" id="goal-${goal.id}">
+        <div class="goal-check">${checkContent}</div>
+        <div class="goal-info">
+          <div class="goal-name">${goal.icon} ${goal.name}</div>
+          <div class="goal-detail">${detail}</div>
+          ${extraInput}
+        </div>
+        ${actionsHtml}
+      </div>`;
+  }
+
+  html += `</div>`;
+
+  if (!dayData.submitted) {
+    // Check if all applicable goals are marked
+    const applicableGoals = GOALS.filter(g => isGoalApplicable(g, today));
+    const allMarked = applicableGoals.every(g => dayData.goals[g.id] && dayData.goals[g.id] !== 'pending');
+    html += `<button class="submit-btn" id="submitBtn" onclick="submitDay()" ${allMarked ? '' : 'disabled'}>
+      ${allMarked ? 'LOCK IN TODAY' : 'MARK ALL GOALS FIRST'}
+    </button>`;
+  }
+
+  container.innerHTML = html;
+}
+
+function renderPunishments() {
+  const container = document.getElementById('punishmentsList');
+  const active = state.activePunishments.filter(p => !p.completed);
+
+  if (active.length === 0) {
+    container.innerHTML = `<div class="no-punishments">🎯 NO ACTIVE PUNISHMENTS<br><br>Stay disciplined.</div>`;
+    return;
+  }
+
+  let html = '';
+  for (const ap of active) {
+    const punish = PUNISHMENTS.find(p => p.id === ap.punishmentId);
+    const goal = GOALS.find(g => g.id === ap.goalId);
+    if (!punish || !goal) continue;
+    html += `
+      <div class="punishment-card">
+        <div class="punishment-icon">${punish.icon}</div>
+        <div class="punishment-info">
+          <div class="punishment-title">${punish.name}</div>
+          <div class="punishment-source">${punish.desc}</div>
+          <div class="punishment-for">FOR FAILING: ${goal.name} on ${formatDate(ap.forDate)}</div>
+        </div>
+        <button class="btn-complete-punishment" onclick="completePunishment('${ap.id}')">DONE</button>
+      </div>`;
+  }
+
+  // Completed punishments
+  const completed = state.activePunishments.filter(p => p.completed);
+  if (completed.length > 0) {
+    html += `<div class="section-title" style="margin-top:16px">COMPLETED</div>`;
+    for (const ap of completed.slice(-5)) {
+      const punish = PUNISHMENTS.find(p => p.id === ap.punishmentId);
+      if (!punish) continue;
+      html += `
+        <div class="punishment-card" style="opacity:0.4">
+          <div class="punishment-icon">${punish.icon}</div>
+          <div class="punishment-info">
+            <div class="punishment-title" style="text-decoration:line-through">${punish.name}</div>
+            <div class="punishment-for">COMPLETED ✓</div>
+          </div>
+        </div>`;
+    }
+  }
+
+  container.innerHTML = html;
+}
+
+function renderHistory() {
+  const container = document.getElementById('historyList');
+  const days = Object.keys(state.days)
+    .filter(d => state.days[d].submitted && isInSummer(d))
+    .sort()
+    .reverse();
+
+  if (days.length === 0) {
+    container.innerHTML = `<div class="empty-history">NO DAYS LOGGED YET</div>`;
+    return;
+  }
+
+  let html = '';
+  for (const d of days) {
+    const dayData = state.days[d];
+    const applicableGoals = GOALS.filter(g => isGoalApplicable(g, d));
+    const pass = applicableGoals.filter(g => dayData.goals[g.id] === 'pass').length;
+    const fail = applicableGoals.filter(g => dayData.goals[g.id] === 'fail').length;
+    const total = applicableGoals.length;
+    const pct = Math.round((pass / total) * 100);
+
+    let dots = '';
+    for (const g of GOALS) {
+      const applicable = isGoalApplicable(g, d);
+      const status = dayData.goals[g.id] || 'pending';
+      let cls = applicable ? (status === 'pass' ? 'pass' : status === 'fail' ? 'fail' : '') : 'na';
+      dots += `<div class="score-dot ${cls}" title="${g.name}"></div>`;
+    }
+
+    html += `
+      <div class="history-item">
+        <div>
+          <div class="history-date">${formatDate(d)}</div>
+          <div class="goal-detail" style="margin-top:3px">Day ${getSummerDay(d)} · ${pass}/${total} goals</div>
+        </div>
+        <div class="history-score">
+          <div class="score-dots">${dots}</div>
+          <div class="history-pct">${pct}%</div>
+        </div>
+      </div>`;
+  }
+
+  container.innerHTML = html;
+}
+
+// ============ ACTIONS ============
+function markGoal(goalId, status) {
+  const today = todayStr();
+  const dayData = getDayData(today);
+  if (dayData.submitted) return;
+  dayData.goals[goalId] = status;
+  saveState();
+  renderToday(today, isInSummer(today));
+}
+
+function updateSavings(val) {
+  state.totalSaved = Math.max(0, Math.min(4000, parseFloat(val) || 0));
+  saveState();
+}
+
+function submitDay() {
+  const today = todayStr();
+  const dayData = getDayData(today);
+  const applicableGoals = GOALS.filter(g => isGoalApplicable(g, today));
+  const allMarked = applicableGoals.every(g => dayData.goals[g.id] && dayData.goals[g.id] !== 'pending');
+  if (!allMarked) return;
+
+  dayData.submitted = true;
+
+  // Assign punishments for failed goals
+  const failedGoals = applicableGoals.filter(g => dayData.goals[g.id] === 'fail');
+  const assignedPunishments = [];
+
+  for (const goal of failedGoals) {
+    const usedIds = state.activePunishments.filter(p => !p.completed).map(p => p.punishmentId);
+    const punishment = randomPunishment(usedIds);
+    const ap = {
+      id: `${today}-${goal.id}-${Date.now()}`,
+      punishmentId: punishment.id,
+      goalId: goal.id,
+      forDate: today,
+      assignedDate: today,
+      completed: false
+    };
+    state.activePunishments.push(ap);
+    assignedPunishments.push({ goal, punishment });
+  }
+
+  saveState();
+
+  // Show review modal
+  showReviewModal(today, failedGoals, assignedPunishments, applicableGoals);
+  render();
+}
+
+function completePunishment(apId) {
+  const ap = state.activePunishments.find(p => p.id === apId);
+  if (ap) { ap.completed = true; saveState(); render(); }
+}
+
+// ============ MODALS ============
+function showReviewModal(today, failedGoals, assignedPunishments, applicableGoals) {
+  const pass = applicableGoals.length - failedGoals.length;
+  const total = applicableGoals.length;
+  const perfect = failedGoals.length === 0;
+
+  document.getElementById('reviewTitle').textContent = perfect ? '🔥 PERFECT DAY' : `DAY COMPLETE`;
+  document.getElementById('reviewSubtitle').textContent = perfect
+    ? `${pass}/${total} goals crushed. Keep that streak alive.`
+    : `${pass}/${total} goals met. ${failedGoals.length} failure${failedGoals.length > 1 ? 's' : ''}.`;
+
+  let detailsHtml = '';
+  if (assignedPunishments.length > 0) {
+    detailsHtml += `<div class="section-title" style="margin-bottom:10px">PUNISHMENTS ASSIGNED</div>`;
+    for (const { goal, punishment } of assignedPunishments) {
+      detailsHtml += `
+        <div class="punishment-card" style="margin-bottom:8px">
+          <div class="punishment-icon">${punishment.icon}</div>
+          <div class="punishment-info">
+            <div class="punishment-title">${punishment.name}</div>
+            <div class="punishment-for">FOR FAILING: ${goal.name}</div>
+          </div>
+        </div>`;
+    }
+  }
+  document.getElementById('reviewDetails').innerHTML = detailsHtml;
+
+  document.getElementById('reviewModal').classList.add('active');
+}
+
+function closeReviewModal() {
+  document.getElementById('reviewModal').classList.remove('active');
+}
+
+function closeModal() {
+  document.getElementById('failModal').classList.remove('active');
+}
+
+// ============ TABS ============
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach((t, i) => {
+    const tabs = ['today', 'punishments', 'history'];
+    t.classList.toggle('active', tabs[i] === tab);
+  });
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  document.getElementById(`tab-${tab}`).classList.add('active');
+}
+
+// Close modals on overlay click
+document.getElementById('failModal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+document.getElementById('reviewModal').addEventListener('click', function(e) {
+  if (e.target === this) closeReviewModal();
+});
+
+// ============ INIT ============
+render();
+
+// Service Worker registration
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+</script>
+</body>
+</html>
