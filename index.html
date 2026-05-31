@@ -25,230 +25,129 @@
     --font-mono: 'Space Mono', monospace;
     --font-body: 'DM Sans', sans-serif;
   }
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--font-body);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  /* Noise texture overlay */
+  body { background: var(--bg); color: var(--text); font-family: var(--font-body); min-height: 100vh; overflow-x: hidden; }
   body::before {
     content: '';
-    position: fixed;
-    inset: 0;
+    position: fixed; inset: 0;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 0;
-    opacity: 0.4;
+    pointer-events: none; z-index: 0; opacity: 0.4;
   }
-
   .app { position: relative; z-index: 1; max-width: 480px; margin: 0 auto; padding: 16px; }
 
-  /* HEADER */
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 24px;
-    padding-top: 8px;
+  /* LOGIN SCREEN */
+  #loginScreen {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    min-height: 100vh; padding: 32px 16px; text-align: center;
   }
-  .header-left h1 {
-    font-family: var(--font-display);
-    font-size: 3.2rem;
-    line-height: 0.9;
-    letter-spacing: 2px;
+  #loginScreen h1 {
+    font-family: var(--font-display); font-size: 4rem; line-height: 0.9; letter-spacing: 3px;
     background: linear-gradient(135deg, var(--accent) 0%, #ff9f43 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-  .header-left .subtitle {
-    font-family: var(--font-mono);
-    font-size: 0.65rem;
-    color: var(--text-muted);
-    letter-spacing: 3px;
-    margin-top: 4px;
-    text-transform: uppercase;
-  }
-  .date-badge {
-    text-align: right;
-  }
-  .date-badge .day-num {
-    font-family: var(--font-display);
-    font-size: 2.4rem;
-    color: var(--accent);
-    line-height: 1;
-  }
-  .date-badge .day-label {
-    font-family: var(--font-mono);
-    font-size: 0.6rem;
-    color: var(--text-muted);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-  }
-
-  /* PROGRESS BAR */
-  .summer-progress {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 12px 16px;
-    margin-bottom: 20px;
-  }
-  .progress-label {
-    display: flex;
-    justify-content: space-between;
-    font-family: var(--font-mono);
-    font-size: 0.65rem;
-    color: var(--text-muted);
-    letter-spacing: 2px;
-    text-transform: uppercase;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     margin-bottom: 8px;
   }
-  .progress-track {
-    height: 4px;
-    background: var(--border);
-    border-radius: 2px;
-    overflow: hidden;
+  #loginScreen .tagline { font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 48px; }
+  .goals-preview { display: flex; flex-direction: column; gap: 8px; width: 100%; max-width: 320px; margin-bottom: 48px; }
+  .goal-pill {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    padding: 10px 14px; display: flex; align-items: center; gap: 10px;
+    font-size: 0.82rem; color: var(--text-muted);
   }
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--accent), #ff9f43);
-    border-radius: 2px;
-    transition: width 0.8s ease;
+  .google-btn {
+    display: flex; align-items: center; gap: 12px;
+    background: white; color: #1a1a1a; border: none; border-radius: 12px;
+    padding: 14px 28px; font-family: var(--font-body); font-size: 0.95rem; font-weight: 600;
+    cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 16px rgba(0,0,0,0.4);
   }
+  .google-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
+  .google-btn svg { width: 20px; height: 20px; }
+  .login-note { font-family: var(--font-mono); font-size: 0.58rem; color: var(--text-muted); letter-spacing: 1px; margin-top: 16px; }
 
-  /* STREAK */
-  .stats-row {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    margin-bottom: 20px;
+  /* LOADING */
+  #loadingScreen {
+    display: none; flex-direction: column; align-items: center; justify-content: center;
+    min-height: 100vh; gap: 16px;
   }
-  .stat-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 12px;
-    text-align: center;
+  .spinner {
+    width: 36px; height: 36px; border: 3px solid var(--border);
+    border-top-color: var(--accent); border-radius: 50%;
+    animation: spin 0.8s linear infinite;
   }
-  .stat-card .val {
-    font-family: var(--font-display);
-    font-size: 2rem;
-    line-height: 1;
-    color: var(--accent);
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text { font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); letter-spacing: 3px; text-transform: uppercase; }
+
+  /* MAIN APP */
+  #mainApp { display: none; }
+
+  /* HEADER */
+  .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; padding-top: 8px; }
+  .header-left h1 {
+    font-family: var(--font-display); font-size: 3.2rem; line-height: 0.9; letter-spacing: 2px;
+    background: linear-gradient(135deg, var(--accent) 0%, #ff9f43 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   }
-  .stat-card .lbl {
-    font-family: var(--font-mono);
-    font-size: 0.55rem;
-    color: var(--text-muted);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-top: 4px;
-  }
+  .header-left .subtitle { font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); letter-spacing: 3px; margin-top: 4px; text-transform: uppercase; }
+  .header-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+  .date-badge { text-align: right; }
+  .date-badge .day-num { font-family: var(--font-display); font-size: 2.4rem; color: var(--accent); line-height: 1; }
+  .date-badge .day-label { font-family: var(--font-mono); font-size: 0.6rem; color: var(--text-muted); letter-spacing: 2px; text-transform: uppercase; }
+  .user-info { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+  .user-avatar { width: 24px; height: 24px; border-radius: 50%; border: 1px solid var(--border); }
+  .user-name { font-family: var(--font-mono); font-size: 0.58rem; color: var(--text-muted); letter-spacing: 1px; max-width: 80px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .signout-btn { font-family: var(--font-mono); font-size: 0.55rem; color: var(--accent2); letter-spacing: 1px; background: none; border: none; cursor: pointer; text-transform: uppercase; }
+
+  /* PROGRESS */
+  .summer-progress { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; }
+  .progress-label { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+  .progress-track { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), #ff9f43); border-radius: 2px; transition: width 0.8s ease; }
+
+  /* STATS */
+  .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px; text-align: center; }
+  .stat-card .val { font-family: var(--font-display); font-size: 2rem; line-height: 1; color: var(--accent); }
+  .stat-card .lbl { font-family: var(--font-mono); font-size: 0.55rem; color: var(--text-muted); letter-spacing: 2px; text-transform: uppercase; margin-top: 4px; }
   .stat-card.red .val { color: var(--accent2); }
   .stat-card.green .val { color: var(--accent3); }
 
+  /* TABS */
+  .tabs { display: flex; gap: 4px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 4px; margin-bottom: 20px; }
+  .tab { flex: 1; padding: 8px; border: none; border-radius: 7px; background: transparent; color: var(--text-muted); font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: all 0.2s; }
+  .tab.active { background: var(--surface2); color: var(--accent); border: 1px solid var(--border); }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
   /* SECTION TITLE */
-  .section-title {
-    font-family: var(--font-mono);
-    font-size: 0.65rem;
-    color: var(--text-muted);
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .section-title::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border);
-  }
+  .section-title { font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
-  /* GOAL CARDS */
+  /* GOALS */
   .goals-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
-
   .goal-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 14px 16px;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    cursor: pointer;
-    transition: all 0.2s;
-    user-select: none;
-    position: relative;
-    overflow: hidden;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 14px 16px; display: flex; align-items: center; gap: 14px;
+    cursor: pointer; transition: all 0.2s; user-select: none; position: relative; overflow: hidden;
+    animation: slideIn 0.3s ease both;
   }
-  .goal-card::before {
-    content: '';
-    position: absolute;
-    left: 0; top: 0; bottom: 0;
-    width: 3px;
-    background: var(--border);
-    transition: background 0.3s;
-  }
+  .goal-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--border); transition: background 0.3s; }
   .goal-card:active { transform: scale(0.98); }
-  .goal-card.done { border-color: rgba(77, 255, 158, 0.2); background: rgba(77,255,158,0.04); }
+  .goal-card.done { border-color: rgba(77,255,158,0.2); background: rgba(77,255,158,0.04); }
   .goal-card.done::before { background: var(--accent3); }
-  .goal-card.failed { border-color: rgba(255, 77, 77, 0.2); background: rgba(255,77,77,0.04); }
+  .goal-card.failed { border-color: rgba(255,77,77,0.2); background: rgba(255,77,77,0.04); }
   .goal-card.failed::before { background: var(--accent2); }
   .goal-card.na { opacity: 0.4; cursor: not-allowed; }
   .goal-card.na::before { background: var(--text-muted); }
-
-  .goal-check {
-    width: 28px; height: 28px;
-    border-radius: 50%;
-    border: 2px solid var(--border);
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-    transition: all 0.2s;
-    font-size: 0.85rem;
-  }
+  .goal-card:nth-child(1){animation-delay:.05s} .goal-card:nth-child(2){animation-delay:.1s}
+  .goal-card:nth-child(3){animation-delay:.15s} .goal-card:nth-child(4){animation-delay:.2s}
+  .goal-card:nth-child(5){animation-delay:.25s} .goal-card:nth-child(6){animation-delay:.3s}
+  .goal-check { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; font-size: 0.85rem; }
   .goal-card.done .goal-check { border-color: var(--accent3); background: rgba(77,255,158,0.15); }
   .goal-card.failed .goal-check { border-color: var(--accent2); background: rgba(255,77,77,0.15); }
-
   .goal-info { flex: 1; min-width: 0; }
-  .goal-name {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--text);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .goal-detail {
-    font-size: 0.72rem;
-    color: var(--text-muted);
-    margin-top: 2px;
-    font-family: var(--font-mono);
-  }
-
-  .goal-actions {
-    display: flex;
-    gap: 6px;
-    flex-shrink: 0;
-  }
-  .btn-sm {
-    padding: 5px 10px;
-    border-radius: 6px;
-    border: 1px solid;
-    font-family: var(--font-mono);
-    font-size: 0.6rem;
-    letter-spacing: 1px;
-    cursor: pointer;
-    transition: all 0.15s;
-    text-transform: uppercase;
-  }
+  .goal-name { font-size: 0.9rem; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .goal-detail { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; font-family: var(--font-mono); }
+  .goal-actions { display: flex; gap: 6px; flex-shrink: 0; }
+  .btn-sm { padding: 5px 10px; border-radius: 6px; border: 1px solid; font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 1px; cursor: pointer; transition: all 0.15s; text-transform: uppercase; }
   .btn-pass { border-color: var(--accent3); color: var(--accent3); background: transparent; }
   .btn-pass:hover { background: rgba(77,255,158,0.1); }
   .btn-fail { border-color: var(--accent2); color: var(--accent2); background: transparent; }
@@ -256,404 +155,163 @@
   .btn-undo { border-color: var(--text-muted); color: var(--text-muted); background: transparent; }
   .btn-undo:hover { background: rgba(255,255,255,0.05); }
 
-  /* PUNISHMENTS SECTION */
-  .punishments-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
+  /* SAVINGS */
+  .savings-input-row { display: flex; gap: 8px; align-items: center; margin-top: 6px; }
+  .savings-input { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-family: var(--font-mono); font-size: 0.85rem; padding: 8px 10px; width: 90px; outline: none; }
+  .savings-input:focus { border-color: var(--accent); }
+  .savings-label { font-size: 0.72rem; color: var(--text-muted); }
 
-  .punishment-card {
-    background: linear-gradient(135deg, rgba(255,77,77,0.08), rgba(255,77,77,0.02));
-    border: 1px solid rgba(255,77,77,0.25);
-    border-radius: 10px;
-    padding: 12px 14px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .punishment-icon { font-size: 1.3rem; flex-shrink: 0; }
-  .punishment-info { flex: 1; }
-  .punishment-title {
-    font-size: 0.82rem;
-    font-weight: 600;
-    color: var(--accent2);
-  }
-  .punishment-source {
-    font-size: 0.68rem;
-    color: var(--text-muted);
-    font-family: var(--font-mono);
-    margin-top: 2px;
-  }
-  .punishment-for {
-    font-size: 0.65rem;
-    color: rgba(255,77,77,0.6);
-    font-family: var(--font-mono);
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    margin-top: 3px;
-  }
-  .btn-complete-punishment {
-    padding: 6px 10px;
-    border-radius: 6px;
-    border: 1px solid var(--accent3);
-    color: var(--accent3);
-    background: transparent;
-    font-family: var(--font-mono);
-    font-size: 0.58rem;
-    cursor: pointer;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    flex-shrink: 0;
-  }
-  .btn-complete-punishment:hover { background: rgba(77,255,158,0.1); }
-
-  .no-punishments {
-    text-align: center;
-    padding: 20px;
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
-    color: var(--accent3);
-    letter-spacing: 2px;
-    border: 1px dashed rgba(77,255,158,0.2);
-    border-radius: 10px;
-  }
-
-  /* SUBMIT BUTTON */
-  .submit-btn {
-    width: 100%;
-    padding: 16px;
-    background: linear-gradient(135deg, var(--accent), #ff9f43);
-    color: #0a0a0f;
-    border: none;
-    border-radius: 12px;
-    font-family: var(--font-display);
-    font-size: 1.4rem;
-    letter-spacing: 3px;
-    cursor: pointer;
-    transition: all 0.2s;
-    margin-bottom: 20px;
-  }
+  /* SUBMIT */
+  .submit-btn { width: 100%; padding: 16px; background: linear-gradient(135deg, var(--accent), #ff9f43); color: #0a0a0f; border: none; border-radius: 12px; font-family: var(--font-display); font-size: 1.4rem; letter-spacing: 3px; cursor: pointer; transition: all 0.2s; margin-bottom: 20px; }
   .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(245,200,66,0.25); }
   .submit-btn:active { transform: translateY(0); }
   .submit-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
 
+  /* PUNISHMENTS */
+  .punishments-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
+  .punishment-card { background: linear-gradient(135deg, rgba(255,77,77,0.08), rgba(255,77,77,0.02)); border: 1px solid rgba(255,77,77,0.25); border-radius: 10px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; }
+  .punishment-icon { font-size: 1.3rem; flex-shrink: 0; }
+  .punishment-info { flex: 1; }
+  .punishment-title { font-size: 0.82rem; font-weight: 600; color: var(--accent2); }
+  .punishment-source { font-size: 0.68rem; color: var(--text-muted); font-family: var(--font-mono); margin-top: 2px; }
+  .punishment-for { font-size: 0.65rem; color: rgba(255,77,77,0.6); font-family: var(--font-mono); letter-spacing: 1px; text-transform: uppercase; margin-top: 3px; }
+  .btn-complete-punishment { padding: 6px 10px; border-radius: 6px; border: 1px solid var(--accent3); color: var(--accent3); background: transparent; font-family: var(--font-mono); font-size: 0.58rem; cursor: pointer; letter-spacing: 1px; text-transform: uppercase; flex-shrink: 0; }
+  .btn-complete-punishment:hover { background: rgba(77,255,158,0.1); }
+  .no-punishments { text-align: center; padding: 20px; font-family: var(--font-mono); font-size: 0.7rem; color: var(--accent3); letter-spacing: 2px; border: 1px dashed rgba(77,255,158,0.2); border-radius: 10px; }
+
   /* HISTORY */
   .history-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 32px; }
-  .history-item {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 12px 16px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    cursor: pointer;
-    transition: border-color 0.2s;
-  }
-  .history-item:hover { border-color: var(--accent); }
-  .history-date {
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    color: var(--text);
-  }
-  .history-score {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
+  .history-item { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; }
+  .history-date { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text); }
+  .history-score { display: flex; align-items: center; gap: 8px; }
   .score-dots { display: flex; gap: 3px; }
-  .score-dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: var(--border);
-  }
+  .score-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); }
   .score-dot.pass { background: var(--accent3); }
   .score-dot.fail { background: var(--accent2); }
   .score-dot.na { background: var(--text-muted); opacity: 0.4; }
-  .history-pct {
-    font-family: var(--font-mono);
-    font-size: 0.68rem;
-    color: var(--text-muted);
-  }
+  .history-pct { font-family: var(--font-mono); font-size: 0.68rem; color: var(--text-muted); }
+  .empty-history { text-align: center; padding: 40px 20px; font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-muted); letter-spacing: 2px; }
 
-  /* MODAL */
-  .modal-overlay {
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,0.85);
-    backdrop-filter: blur(6px);
-    z-index: 100;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s;
-  }
-  .modal-overlay.active { opacity: 1; pointer-events: all; }
-  .modal {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 20px 20px 0 0;
-    padding: 24px 20px 40px;
-    width: 100%;
-    max-width: 480px;
-    transform: translateY(100%);
-    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-  .modal-overlay.active .modal { transform: translateY(0); }
-  .modal-handle {
-    width: 36px; height: 4px;
-    background: var(--border);
-    border-radius: 2px;
-    margin: 0 auto 20px;
-  }
-  .modal-title {
-    font-family: var(--font-display);
-    font-size: 1.8rem;
-    color: var(--accent);
-    letter-spacing: 2px;
-    margin-bottom: 8px;
-  }
-  .modal-subtitle {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    margin-bottom: 20px;
-    line-height: 1.5;
-  }
-  .modal-punishment-reveal {
-    background: linear-gradient(135deg, rgba(255,77,77,0.1), rgba(255,77,77,0.03));
-    border: 1px solid rgba(255,77,77,0.3);
-    border-radius: 12px;
-    padding: 16px;
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  .modal-punishment-reveal .punishment-emoji { font-size: 2.5rem; margin-bottom: 8px; }
-  .modal-punishment-reveal .punishment-name {
-    font-family: var(--font-display);
-    font-size: 1.6rem;
-    color: var(--accent2);
-    letter-spacing: 2px;
-  }
-  .modal-punishment-reveal .punishment-desc {
-    font-size: 0.78rem;
-    color: var(--text-muted);
-    margin-top: 6px;
-  }
-  .modal-btn {
-    width: 100%;
-    padding: 14px;
-    border-radius: 10px;
-    border: none;
-    font-family: var(--font-display);
-    font-size: 1.2rem;
-    letter-spacing: 2px;
-    cursor: pointer;
-    margin-bottom: 8px;
-    transition: all 0.2s;
-  }
-  .modal-btn.primary { background: var(--accent2); color: white; }
-  .modal-btn.secondary { background: transparent; border: 1px solid var(--border); color: var(--text-muted); }
-  .modal-btn:hover { opacity: 0.85; }
-
-  /* TABS */
-  .tabs {
-    display: flex;
-    gap: 4px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 4px;
-    margin-bottom: 20px;
-  }
-  .tab {
-    flex: 1;
-    padding: 8px;
-    border: none;
-    border-radius: 7px;
-    background: transparent;
-    color: var(--text-muted);
-    font-family: var(--font-mono);
-    font-size: 0.6rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .tab.active { background: var(--surface2); color: var(--accent); border: 1px solid var(--border); }
-
-  .tab-content { display: none; }
-  .tab-content.active { display: block; }
-
-  /* Day off banner */
-  .day-off-banner {
-    background: var(--surface);
-    border: 1px dashed var(--border);
-    border-radius: 12px;
-    padding: 24px;
-    text-align: center;
-    margin-bottom: 20px;
-  }
+  /* BANNERS */
+  .submitted-banner { background: rgba(77,255,158,0.05); border: 1px solid rgba(77,255,158,0.2); border-radius: 12px; padding: 16px; text-align: center; margin-bottom: 16px; font-family: var(--font-mono); font-size: 0.7rem; color: var(--accent3); letter-spacing: 2px; text-transform: uppercase; }
+  .day-off-banner { background: var(--surface); border: 1px dashed var(--border); border-radius: 12px; padding: 24px; text-align: center; margin-bottom: 20px; }
   .day-off-banner .icon { font-size: 2.5rem; margin-bottom: 8px; }
   .day-off-banner .title { font-family: var(--font-display); font-size: 1.4rem; color: var(--text-muted); letter-spacing: 2px; }
   .day-off-banner .desc { font-size: 0.75rem; color: var(--text-muted); margin-top: 6px; }
 
-  /* Already submitted */
-  .submitted-banner {
-    background: rgba(77,255,158,0.05);
-    border: 1px solid rgba(77,255,158,0.2);
-    border-radius: 12px;
-    padding: 16px;
-    text-align: center;
-    margin-bottom: 16px;
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
-    color: var(--accent3);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-  }
+  /* BADGE */
+  .badge { display: inline-flex; align-items: center; justify-content: center; background: var(--accent2); color: white; border-radius: 10px; font-family: var(--font-mono); font-size: 0.6rem; padding: 2px 6px; margin-left: 6px; font-weight: bold; }
 
-  .empty-history {
-    text-align: center;
-    padding: 40px 20px;
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
-    color: var(--text-muted);
-    letter-spacing: 2px;
-  }
+  /* MODAL */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(6px); z-index: 100; display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+  .modal-overlay.active { opacity: 1; pointer-events: all; }
+  .modal { background: var(--surface2); border: 1px solid var(--border); border-radius: 20px 20px 0 0; padding: 24px 20px 40px; width: 100%; max-width: 480px; transform: translateY(100%); transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1); }
+  .modal-overlay.active .modal { transform: translateY(0); }
+  .modal-handle { width: 36px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 20px; }
+  .modal-title { font-family: var(--font-display); font-size: 1.8rem; color: var(--accent); letter-spacing: 2px; margin-bottom: 8px; }
+  .modal-subtitle { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 20px; line-height: 1.5; }
+  .modal-btn { width: 100%; padding: 14px; border-radius: 10px; border: none; font-family: var(--font-display); font-size: 1.2rem; letter-spacing: 2px; cursor: pointer; margin-bottom: 8px; transition: all 0.2s; }
+  .modal-btn.primary { background: var(--accent2); color: white; }
+  .modal-btn.secondary { background: transparent; border: 1px solid var(--border); color: var(--text-muted); }
+  .modal-btn:hover { opacity: 0.85; }
+  .punishment-card.completed-style { opacity: 0.4; }
 
-  /* Savings tracker */
-  .savings-input-row {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    margin-top: 6px;
-  }
-  .savings-input {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--text);
-    font-family: var(--font-mono);
-    font-size: 0.85rem;
-    padding: 8px 10px;
-    width: 100px;
-    outline: none;
-  }
-  .savings-input:focus { border-color: var(--accent); }
-  .savings-label {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-  }
+  @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-  /* Notification badge */
-  .badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--accent2);
-    color: white;
-    border-radius: 10px;
-    font-family: var(--font-mono);
-    font-size: 0.6rem;
-    padding: 2px 6px;
-    margin-left: 6px;
-    font-weight: bold;
-  }
-
-  @keyframes slideIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  .goal-card { animation: slideIn 0.3s ease both; }
-  .goal-card:nth-child(1) { animation-delay: 0.05s; }
-  .goal-card:nth-child(2) { animation-delay: 0.1s; }
-  .goal-card:nth-child(3) { animation-delay: 0.15s; }
-  .goal-card:nth-child(4) { animation-delay: 0.2s; }
-  .goal-card:nth-child(5) { animation-delay: 0.25s; }
-  .goal-card:nth-child(6) { animation-delay: 0.3s; }
+  /* SYNC INDICATOR */
+  .sync-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent3); display: inline-block; margin-left: 6px; }
+  .sync-dot.syncing { background: var(--accent); animation: pulse 1s ease infinite; }
+  .sync-dot.error { background: var(--accent2); }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 </style>
 </head>
 <body>
-<div class="app">
-  <!-- HEADER -->
-  <div class="header">
-    <div class="header-left">
-      <h1>SUMMER<br>GRIND</h1>
-      <div class="subtitle">JUN 1 — SEP 1 · 2026</div>
-    </div>
-    <div class="date-badge">
-      <div class="day-num" id="dayNum">—</div>
-      <div class="day-label" id="dayLabel">TODAY</div>
-      <div class="day-label" id="weekdayLabel" style="margin-top:2px"></div>
-    </div>
-  </div>
 
-  <!-- SUMMER PROGRESS -->
-  <div class="summer-progress">
-    <div class="progress-label">
-      <span>SUMMER PROGRESS</span>
-      <span id="progressPct">0%</span>
-    </div>
-    <div class="progress-track">
-      <div class="progress-fill" id="progressFill" style="width:0%"></div>
-    </div>
+<!-- LOGIN SCREEN -->
+<div id="loginScreen">
+  <h1>SUMMER<br>GRIND</h1>
+  <div class="tagline">JUN 1 — SEP 1 · 2026</div>
+  <div class="goals-preview">
+    <div class="goal-pill">💪 Workout every weekday</div>
+    <div class="goal-pill">🍗 Hit 3,500 calories daily</div>
+    <div class="goal-pill">🌙 Lights out by bedtime</div>
+    <div class="goal-pill">💰 Save $4,000 this summer</div>
+    <div class="goal-pill">📖 Read your Bible daily</div>
+    <div class="goal-pill">🔒 Stay clean every day</div>
   </div>
+  <button class="google-btn" onclick="signIn()">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+      <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+      <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+      <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+    </svg>
+    Sign in with Google
+  </button>
+  <div class="login-note">YOUR DATA SYNCS ACROSS ALL YOUR DEVICES</div>
+</div>
 
-  <!-- STATS -->
-  <div class="stats-row">
-    <div class="stat-card green">
-      <div class="val" id="streakVal">0</div>
-      <div class="lbl">🔥 STREAK</div>
+<!-- LOADING SCREEN -->
+<div id="loadingScreen">
+  <div class="spinner"></div>
+  <div class="loading-text">LOADING YOUR GRIND</div>
+</div>
+
+<!-- MAIN APP -->
+<div id="mainApp">
+  <div class="app">
+    <!-- HEADER -->
+    <div class="header">
+      <div class="header-left">
+        <h1>SUMMER<br>GRIND</h1>
+        <div class="subtitle">JUN 1 — SEP 1 · 2026</div>
+      </div>
+      <div class="header-right">
+        <div class="date-badge">
+          <div class="day-num" id="dayNum">—</div>
+          <div class="day-label" id="weekdayLabel"></div>
+        </div>
+        <div class="user-info">
+          <img class="user-avatar" id="userAvatar" src="" alt="">
+          <span class="user-name" id="userName"></span>
+          <span class="sync-dot" id="syncDot" title="Synced"></span>
+        </div>
+        <button class="signout-btn" onclick="signOut()">Sign out</button>
+      </div>
     </div>
-    <div class="stat-card">
-      <div class="val" id="perfectVal">0</div>
-      <div class="lbl">✅ PERFECT</div>
+
+    <!-- PROGRESS -->
+    <div class="summer-progress">
+      <div class="progress-label">
+        <span>SUMMER PROGRESS</span>
+        <span id="progressPct">0%</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill" style="width:0%"></div>
+      </div>
     </div>
-    <div class="stat-card red">
-      <div class="val" id="failsVal">0</div>
-      <div class="lbl">💀 FAILS</div>
+
+    <!-- STATS -->
+    <div class="stats-row">
+      <div class="stat-card green"><div class="val" id="streakVal">0</div><div class="lbl">🔥 STREAK</div></div>
+      <div class="stat-card"><div class="val" id="perfectVal">0</div><div class="lbl">✅ PERFECT</div></div>
+      <div class="stat-card red"><div class="val" id="failsVal">0</div><div class="lbl">💀 FAILS</div></div>
     </div>
-  </div>
 
-  <!-- TABS -->
-  <div class="tabs">
-    <button class="tab active" onclick="switchTab('today')">TODAY</button>
-    <button class="tab" onclick="switchTab('punishments')">
-      PUNISH
-      <span class="badge" id="punishBadge" style="display:none">0</span>
-    </button>
-    <button class="tab" onclick="switchTab('history')">LOG</button>
-  </div>
+    <!-- TABS -->
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('today')">TODAY</button>
+      <button class="tab" onclick="switchTab('punishments')">PUNISH<span class="badge" id="punishBadge" style="display:none">0</span></button>
+      <button class="tab" onclick="switchTab('history')">LOG</button>
+    </div>
 
-  <!-- TODAY TAB -->
-  <div class="tab-content active" id="tab-today">
-    <div id="todayContent"></div>
-  </div>
-
-  <!-- PUNISHMENTS TAB -->
-  <div class="tab-content" id="tab-punishments">
-    <div class="section-title">ACTIVE PUNISHMENTS</div>
-    <div id="punishmentsList"></div>
-  </div>
-
-  <!-- HISTORY TAB -->
-  <div class="tab-content" id="tab-history">
-    <div class="section-title">DAILY LOG</div>
-    <div id="historyList"></div>
+    <div class="tab-content active" id="tab-today"><div id="todayContent"></div></div>
+    <div class="tab-content" id="tab-punishments"><div class="section-title">ACTIVE PUNISHMENTS</div><div id="punishmentsList"></div></div>
+    <div class="tab-content" id="tab-history"><div class="section-title">DAILY LOG</div><div id="historyList"></div></div>
   </div>
 </div>
 
-<!-- FAIL MODAL -->
-<div class="modal-overlay" id="failModal">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-title">PENALTY ASSIGNED</div>
-    <div class="modal-subtitle" id="modalSubtitle">You failed a goal. Own it.</div>
-    <div class="modal-punishment-reveal" id="modalPunishReveal"></div>
-    <button class="modal-btn primary" onclick="closeModal()">GOT IT. I'LL DO IT.</button>
-    <button class="modal-btn secondary" onclick="closeModal()">Dismiss</button>
-  </div>
-</div>
-
-<!-- DAY REVIEW MODAL -->
+<!-- REVIEW MODAL -->
 <div class="modal-overlay" id="reviewModal">
   <div class="modal">
     <div class="modal-handle"></div>
@@ -664,241 +322,204 @@
   </div>
 </div>
 
-<script>
-// ============ DATA ============
-const SUMMER_START = new Date('2026-06-01');
-const SUMMER_END = new Date('2026-09-01');
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut as fbSignOut, onAuthStateChanged }
+  from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, collection, query, orderBy }
+  from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyC_XFu6spkAoawAad_sh2SkMUUX_U1KxmQ",
+  authDomain: "summerchecklist2026.firebaseapp.com",
+  projectId: "summerchecklist2026",
+  storageBucket: "summerchecklist2026.firebasestorage.app",
+  messagingSenderId: "793836582702",
+  appId: "1:793836582702:web:d729d1e98ab04a82cc6cbf",
+  measurementId: "G-GGPD94STGT"
+};
+
+const fbApp = initializeApp(firebaseConfig);
+const auth = getAuth(fbApp);
+const db = getFirestore(fbApp);
+
+// ============ CONSTANTS ============
+const SUMMER_START = new Date('2026-06-01T00:00:00');
+const SUMMER_END   = new Date('2026-09-01T00:00:00');
 
 const GOALS = [
-  {
-    id: 'workout',
-    name: 'Workout',
-    detail: 'Every weekday',
-    icon: '💪',
-    weekdaysOnly: true,
-    type: 'check'
-  },
-  {
-    id: 'calories',
-    name: '3500 Calories',
-    detail: 'Goal: 160lb',
-    icon: '🍗',
-    weekdaysOnly: false,
-    type: 'check'
-  },
-  {
-    id: 'sleep',
-    name: 'Bedtime',
-    detail: 'Sun–Thu 10:30pm | Fri–Sat 12am',
-    icon: '🌙',
-    weekdaysOnly: false,
-    type: 'check'
-  },
-  {
-    id: 'savings',
-    name: 'Savings',
-    detail: '$4,000 target by Sep 1',
-    icon: '💰',
-    weekdaysOnly: false,
-    type: 'savings'
-  },
-  {
-    id: 'bible',
-    name: 'Read Bible',
-    detail: 'Daily reading',
-    icon: '📖',
-    weekdaysOnly: false,
-    type: 'check'
-  },
-  {
-    id: 'nofap',
-    name: 'Stay Clean',
-    detail: 'No masturbating',
-    icon: '🔒',
-    weekdaysOnly: false,
-    type: 'check'
-  }
+  { id:'workout', name:'Workout', detail:'Every weekday', icon:'💪', weekdaysOnly:true },
+  { id:'calories', name:'3500 Calories', detail:'Goal: 160lb', icon:'🍗', weekdaysOnly:false },
+  { id:'sleep', name:'Bedtime', detail:'Sun–Thu 10:30pm | Fri–Sat 12am', icon:'🌙', weekdaysOnly:false },
+  { id:'savings', name:'Savings', detail:'$4,000 target by Sep 1', icon:'💰', weekdaysOnly:false },
+  { id:'bible', name:'Read Bible', detail:'Daily reading', icon:'📖', weekdaysOnly:false },
+  { id:'nofap', name:'Stay Clean', detail:'No masturbating', icon:'🔒', weekdaysOnly:false },
 ];
 
 const PUNISHMENTS = [
-  { id: 'family', name: '2hr Family Time', desc: 'Put the phone down. Be present with family for 2 full hours.', icon: '👨‍👩‍👧', duration: '2 hours' },
-  { id: 'nosocial', name: 'No Social Media', desc: 'Calls and necessary messages ONLY for the entire day.', icon: '📵', duration: '1 day' },
-  { id: 'run5', name: '5 Mile Run', desc: 'Lace up. No shortcuts. Track it.', icon: '🏃', duration: 'One session' },
-  { id: 'cleanroom', name: 'Clean Your Room', desc: 'Full clean: vacuum, organize, wipe surfaces. No half-measures.', icon: '🧹', duration: '1-2 hours' },
-  { id: 'fine20', name: '$20 Fine', desc: 'Transfer $20 to your savings account right now.', icon: '💸', duration: 'Immediate' },
-  { id: 'novideogames', name: 'No Video Games', desc: 'Zero gaming for the next 3 days. Period.', icon: '🎮', duration: '3 days' },
-  { id: 'coldbath', name: 'Cold Shower', desc: 'Full 5-minute cold shower. No warm water.', icon: '🚿', duration: '5 minutes' },
-  { id: 'pushups', name: '100 Pushups', desc: 'Today. Can be broken into sets, must be done before bed.', icon: '🤸', duration: 'Today' },
-  { id: 'nophone', name: 'No Phone Till Noon', desc: 'Phone off and in a drawer until 12pm tomorrow.', icon: '📱', duration: 'Until noon' },
-  { id: 'journal', name: 'Accountability Write-Up', desc: 'Write a 1-page journal entry about why you failed and how you\'ll fix it.', icon: '✍️', duration: '30 minutes' },
-  { id: 'extraworkout', name: 'Bonus Workout', desc: 'Extra 45-min workout session in addition to your regular one.', icon: '🏋️', duration: '45 minutes' },
-  { id: 'earlyrise', name: '5am Wake-Up', desc: 'Set your alarm for 5am tomorrow. No snooze.', icon: '⏰', duration: 'Tomorrow' },
+  { id:'family',      name:'2hr Family Time',         desc:'Put the phone down. Be present with family for 2 full hours.',          icon:'👨‍👩‍👧' },
+  { id:'nosocial',    name:'No Social Media',          desc:'Calls and necessary messages ONLY for the entire day.',                  icon:'📵' },
+  { id:'run5',        name:'5 Mile Run',               desc:'Lace up. No shortcuts. Track it.',                                       icon:'🏃' },
+  { id:'cleanroom',   name:'Clean Your Room',          desc:'Full clean: vacuum, organize, wipe surfaces. No half-measures.',         icon:'🧹' },
+  { id:'fine20',      name:'$20 Fine',                 desc:'Transfer $20 to your savings account right now.',                        icon:'💸' },
+  { id:'novideogames',name:'No Video Games (3 days)',  desc:'Zero gaming for the next 3 days. Period.',                               icon:'🎮' },
+  { id:'coldbath',    name:'Cold Shower',              desc:'Full 5-minute cold shower. No warm water.',                              icon:'🚿' },
+  { id:'pushups',     name:'100 Pushups',              desc:'Today. Can be broken into sets — must be done before bed.',              icon:'🤸' },
+  { id:'nophone',     name:'No Phone Till Noon',       desc:'Phone off and in a drawer until 12pm tomorrow.',                        icon:'📱' },
+  { id:'journal',     name:'Accountability Write-Up',  desc:'Write a 1-page journal entry: why you failed, how you\'ll fix it.',     icon:'✍️' },
+  { id:'extraworkout',name:'Bonus Workout',            desc:'Extra 45-min workout session on top of your regular one.',               icon:'🏋️' },
+  { id:'earlyrise',   name:'5am Wake-Up',              desc:'Set your alarm for 5am tomorrow. No snooze.',                            icon:'⏰' },
 ];
 
 // ============ STATE ============
-let state = loadState();
-
-function loadState() {
-  const saved = localStorage.getItem('summerGrind2026');
-  if (saved) return JSON.parse(saved);
-  return {
-    days: {},          // keyed by YYYY-MM-DD
-    totalSaved: 0,
-    activePunishments: []  // { id, punishmentId, goalId, assignedDate, forDate }
-  };
-}
-
-function saveState() {
-  localStorage.setItem('summerGrind2026', JSON.stringify(state));
-}
+let currentUser = null;
+let appState = { days: {}, totalSaved: 0, activePunishments: [] };
+let unsubscribe = null;
 
 // ============ HELPERS ============
-function todayStr() {
+const todayStr = () => new Date().toISOString().split('T')[0];
+const parseDateStr = s => new Date(s + 'T00:00:00');
+const isWeekday = s => { const d = parseDateStr(s).getDay(); return d !== 0 && d !== 6; };
+const isInSummer = s => { const d = parseDateStr(s); return d >= SUMMER_START && d < SUMMER_END; };
+const getSummerDay = s => Math.floor((parseDateStr(s) - SUMMER_START) / 86400000) + 1;
+const getWeekdayName = s => parseDateStr(s).toLocaleDateString('en-US', { weekday:'long' });
+const formatDate = s => parseDateStr(s).toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' });
+const isGoalApplicable = (goal, date) => !(goal.weekdaysOnly && !isWeekday(date));
+const getBedtimeLabel = s => { const d = parseDateStr(s).getDay(); return (d===5||d===6) ? '12:00am' : '10:30pm'; };
+const calcSummerProgress = () => {
   const now = new Date();
-  return now.toISOString().split('T')[0];
-}
+  if (now < SUMMER_START) return 0;
+  if (now >= SUMMER_END) return 100;
+  return Math.round(((now - SUMMER_START) / (SUMMER_END - SUMMER_START)) * 100);
+};
+const randomPunishment = (excludeIds=[]) => {
+  const avail = PUNISHMENTS.filter(p => !excludeIds.includes(p.id));
+  return avail[Math.floor(Math.random() * avail.length)];
+};
+const getDayData = date => {
+  if (!appState.days[date]) appState.days[date] = { goals:{}, submitted:false, savingsAmount:0 };
+  return appState.days[date];
+};
 
-function dateStr(d) {
-  return d.toISOString().split('T')[0];
-}
+// ============ FIREBASE OPS ============
+const userDocRef = () => doc(db, 'users', currentUser.uid);
 
-function parseDateStr(s) {
-  return new Date(s + 'T00:00:00');
-}
-
-function isWeekend(dateString) {
-  const d = parseDateStr(dateString);
-  const day = d.getDay();
-  return day === 0 || day === 6; // Sunday or Saturday
-}
-
-function isWeekday(dateString) {
-  return !isWeekend(dateString);
-}
-
-function getSummerDay(dateString) {
-  const d = parseDateStr(dateString);
-  const diff = d - SUMMER_START;
-  return Math.floor(diff / (1000*60*60*24)) + 1;
-}
-
-function isInSummer(dateString) {
-  const d = parseDateStr(dateString);
-  return d >= SUMMER_START && d < SUMMER_END;
-}
-
-function formatDate(dateString) {
-  const d = parseDateStr(dateString);
-  return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-}
-
-function getWeekdayName(dateString) {
-  const d = parseDateStr(dateString);
-  return d.toLocaleDateString('en-US', { weekday: 'long' });
-}
-
-function isGoalApplicable(goal, dateString) {
-  if (goal.weekdaysOnly && !isWeekday(dateString)) return false;
-  return true;
-}
-
-function randomPunishment(excludeIds = []) {
-  const available = PUNISHMENTS.filter(p => !excludeIds.includes(p.id));
-  return available[Math.floor(Math.random() * available.length)];
-}
-
-function getBedtimeLabel(dateString) {
-  const d = parseDateStr(dateString);
-  const day = d.getDay();
-  // Friday=5, Saturday=6
-  if (day === 5 || day === 6) return '12:00am';
-  return '10:30pm';
-}
-
-function getDayData(dateString) {
-  if (!state.days[dateString]) {
-    state.days[dateString] = { goals: {}, submitted: false, savingsAmount: 0 };
+async function loadUserData() {
+  setSyncState('syncing');
+  try {
+    const snap = await getDoc(userDocRef());
+    if (snap.exists()) {
+      appState = { days:{}, totalSaved:0, activePunishments:[], ...snap.data() };
+    } else {
+      appState = { days:{}, totalSaved:0, activePunishments:[] };
+      await setDoc(userDocRef(), appState);
+    }
+    setSyncState('ok');
+    render();
+  } catch(e) {
+    console.error(e);
+    setSyncState('error');
   }
-  return state.days[dateString];
 }
 
-// ============ STATS ============
-function calcStats() {
-  const today = todayStr();
-  let streak = 0;
-  let perfect = 0;
-  let totalFails = 0;
-
-  // Count all submitted days
-  const submittedDays = Object.keys(state.days)
-    .filter(d => state.days[d].submitted && isInSummer(d))
-    .sort();
-
-  for (const d of submittedDays) {
-    const dayData = state.days[d];
-    const applicableGoals = GOALS.filter(g => isGoalApplicable(g, d));
-    const fails = applicableGoals.filter(g => dayData.goals[g.id] === 'fail').length;
-    totalFails += fails;
-    if (fails === 0) perfect++;
+async function saveUserData() {
+  if (!currentUser) return;
+  setSyncState('syncing');
+  try {
+    await setDoc(userDocRef(), appState);
+    setSyncState('ok');
+  } catch(e) {
+    console.error(e);
+    setSyncState('error');
   }
-
-  // Streak: consecutive submitted days (from today backwards) with 0 fails
-  const sortedDesc = [...submittedDays].reverse();
-  for (const d of sortedDesc) {
-    const dayData = state.days[d];
-    const applicableGoals = GOALS.filter(g => isGoalApplicable(g, d));
-    const fails = applicableGoals.filter(g => dayData.goals[g.id] === 'fail').length;
-    if (fails === 0) streak++;
-    else break;
-  }
-
-  return { streak, perfect, fails: totalFails };
 }
 
-function calcSummerProgress() {
-  const today = new Date();
-  if (today < SUMMER_START) return 0;
-  if (today >= SUMMER_END) return 100;
-  const total = SUMMER_END - SUMMER_START;
-  const elapsed = today - SUMMER_START;
-  return Math.round((elapsed / total) * 100);
+function setSyncState(s) {
+  const dot = document.getElementById('syncDot');
+  if (!dot) return;
+  dot.className = 'sync-dot' + (s === 'syncing' ? ' syncing' : s === 'error' ? ' error' : '');
+  dot.title = s === 'ok' ? 'Synced' : s === 'syncing' ? 'Saving...' : 'Sync error';
+}
+
+// ============ AUTH ============
+window.signIn = async () => {
+  try {
+    const provider = new GoogleAuthProvider();
+    await signInWithPopup(auth, provider);
+  } catch(e) { console.error(e); }
+};
+
+window.signOut = async () => {
+  if (unsubscribe) unsubscribe();
+  await fbSignOut(auth);
+  appState = { days:{}, totalSaved:0, activePunishments:[] };
+  showScreen('login');
+};
+
+onAuthStateChanged(auth, async user => {
+  if (user) {
+    currentUser = user;
+    showScreen('loading');
+    document.getElementById('userAvatar').src = user.photoURL || '';
+    document.getElementById('userName').textContent = user.displayName?.split(' ')[0] || 'User';
+    await loadUserData();
+    showScreen('app');
+  } else {
+    currentUser = null;
+    showScreen('login');
+  }
+});
+
+function showScreen(s) {
+  document.getElementById('loginScreen').style.display   = s==='login'   ? 'flex'  : 'none';
+  document.getElementById('loadingScreen').style.display = s==='loading' ? 'flex'  : 'none';
+  document.getElementById('mainApp').style.display       = s==='app'     ? 'block' : 'none';
 }
 
 // ============ RENDER ============
 function render() {
   const today = todayStr();
   const inSummer = isInSummer(today);
-  const dayNum = inSummer ? getSummerDay(today) : '—';
-  const weekday = getWeekdayName(today);
+  document.getElementById('dayNum').textContent = inSummer ? `D${getSummerDay(today)}` : '—';
+  document.getElementById('weekdayLabel').textContent = getWeekdayName(today).toUpperCase();
 
-  // Header
-  document.getElementById('dayNum').textContent = inSummer ? `D${dayNum}` : '—';
-  document.getElementById('weekdayLabel').textContent = weekday.toUpperCase();
-
-  // Progress
   const pct = calcSummerProgress();
   document.getElementById('progressPct').textContent = pct + '%';
   document.getElementById('progressFill').style.width = pct + '%';
 
-  // Stats
   const stats = calcStats();
   document.getElementById('streakVal').textContent = stats.streak;
   document.getElementById('perfectVal').textContent = stats.perfect;
   document.getElementById('failsVal').textContent = stats.fails;
 
-  // Punishment badge
-  const activePunish = state.activePunishments.filter(p => !p.completed);
+  const activePunish = (appState.activePunishments || []).filter(p => !p.completed);
   const badge = document.getElementById('punishBadge');
-  if (activePunish.length > 0) {
-    badge.style.display = 'inline-flex';
-    badge.textContent = activePunish.length;
-  } else {
-    badge.style.display = 'none';
-  }
+  badge.style.display = activePunish.length > 0 ? 'inline-flex' : 'none';
+  badge.textContent = activePunish.length;
 
   renderToday(today, inSummer);
   renderPunishments();
   renderHistory();
+}
+
+function calcStats() {
+  const submitted = Object.keys(appState.days)
+    .filter(d => appState.days[d].submitted && isInSummer(d)).sort();
+  let streak = 0, perfect = 0, fails = 0;
+  for (const d of submitted) {
+    const g = appState.days[d].goals || {};
+    const applicable = GOALS.filter(goal => isGoalApplicable(goal, d));
+    const dayFails = applicable.filter(goal => g[goal.id] === 'fail').length;
+    fails += dayFails;
+    if (dayFails === 0) perfect++;
+  }
+  for (const d of [...submitted].reverse()) {
+    const g = appState.days[d].goals || {};
+    const applicable = GOALS.filter(goal => isGoalApplicable(goal, d));
+    const dayFails = applicable.filter(goal => g[goal.id] === 'fail').length;
+    if (dayFails === 0) streak++; else break;
+  }
+  return { streak, perfect, fails };
 }
 
 function renderToday(today, inSummer) {
@@ -906,88 +527,53 @@ function renderToday(today, inSummer) {
   const dayData = getDayData(today);
 
   if (!inSummer) {
-    const start = today < dateStr(SUMMER_START);
-    container.innerHTML = `
-      <div class="day-off-banner">
-        <div class="icon">${start ? '⏳' : '🏆'}</div>
-        <div class="title">${start ? 'NOT STARTED YET' : 'SUMMER COMPLETE'}</div>
-        <div class="desc">${start ? 'Summer grind begins June 1st, 2026.' : 'You made it through the summer!'}</div>
-      </div>
-    `;
+    const before = today < '2026-06-01';
+    container.innerHTML = `<div class="day-off-banner">
+      <div class="icon">${before ? '⏳' : '🏆'}</div>
+      <div class="title">${before ? 'NOT STARTED YET' : 'SUMMER COMPLETE'}</div>
+      <div class="desc">${before ? 'Summer grind begins June 1st, 2026.' : 'You made it through the summer!'}</div>
+    </div>`;
     return;
   }
 
   let html = '';
-
-  if (dayData.submitted) {
-    html += `<div class="submitted-banner">✅ TODAY LOGGED · ${formatDate(today)}</div>`;
-  }
-
-  html += `<div class="section-title">TODAY'S GOALS · ${formatDate(today)}</div>`;
-  html += `<div class="goals-list" id="goalsList">`;
+  if (dayData.submitted) html += `<div class="submitted-banner">✅ TODAY LOGGED · ${formatDate(today)}</div>`;
+  html += `<div class="section-title">TODAY'S GOALS · ${formatDate(today)}</div><div class="goals-list">`;
 
   for (const goal of GOALS) {
     const applicable = isGoalApplicable(goal, today);
     const status = dayData.goals[goal.id] || 'pending';
-    const bedtime = goal.id === 'sleep' ? getBedtimeLabel(today) : null;
-    const detail = bedtime ? `By ${bedtime}` : goal.detail;
-
-    let cardClass = '';
-    let checkContent = '';
+    const detail = goal.id === 'sleep' ? `By ${getBedtimeLabel(today)}` : goal.detail;
+    let cardClass = '', checkContent = '';
     if (!applicable) { cardClass = 'na'; checkContent = '—'; }
     else if (status === 'pass') { cardClass = 'done'; checkContent = '✓'; }
     else if (status === 'fail') { cardClass = 'failed'; checkContent = '✗'; }
 
-    let actionsHtml = '';
+    let actions = '';
     if (applicable && !dayData.submitted) {
-      if (status === 'pending') {
-        actionsHtml = `
-          <div class="goal-actions">
-            <button class="btn-sm btn-pass" onclick="markGoal('${goal.id}', 'pass')">PASS</button>
-            <button class="btn-sm btn-fail" onclick="markGoal('${goal.id}', 'fail')">FAIL</button>
-          </div>`;
+      actions = status === 'pending'
+        ? `<div class="goal-actions"><button class="btn-sm btn-pass" onclick="markGoal('${goal.id}','pass')">PASS</button><button class="btn-sm btn-fail" onclick="markGoal('${goal.id}','fail')">FAIL</button></div>`
+        : `<div class="goal-actions"><button class="btn-sm btn-undo" onclick="markGoal('${goal.id}','pending')">UNDO</button></div>`;
+    }
+
+    let extra = '';
+    if (goal.id === 'savings' && applicable) {
+      if (!dayData.submitted) {
+        extra = `<div class="savings-input-row"><span class="savings-label">Total saved: $</span><input class="savings-input" type="number" id="savingsInput" placeholder="0" value="${appState.totalSaved||0}" onchange="updateSavings(this.value)" min="0" max="4000"><span class="savings-label">/ $4,000</span></div>`;
       } else {
-        actionsHtml = `
-          <div class="goal-actions">
-            <button class="btn-sm btn-undo" onclick="markGoal('${goal.id}', 'pending')">UNDO</button>
-          </div>`;
+        extra = `<div class="goal-detail" style="margin-top:4px">Total saved: $${appState.totalSaved||0} / $4,000</div>`;
       }
     }
 
-    let extraInput = '';
-    if (goal.id === 'savings' && applicable && !dayData.submitted) {
-      extraInput = `<div class="savings-input-row">
-        <span class="savings-label">Total saved: $</span>
-        <input class="savings-input" type="number" id="savingsInput" placeholder="0" 
-          value="${state.totalSaved || 0}" 
-          onchange="updateSavings(this.value)" min="0" max="4000">
-        <span class="savings-label">/ $4,000</span>
-      </div>`;
-    } else if (goal.id === 'savings' && applicable) {
-      extraInput = `<div class="goal-detail" style="margin-top:4px">Total saved: $${state.totalSaved || 0} / $4,000</div>`;
-    }
-
-    html += `
-      <div class="goal-card ${cardClass}" id="goal-${goal.id}">
-        <div class="goal-check">${checkContent}</div>
-        <div class="goal-info">
-          <div class="goal-name">${goal.icon} ${goal.name}</div>
-          <div class="goal-detail">${detail}</div>
-          ${extraInput}
-        </div>
-        ${actionsHtml}
-      </div>`;
+    html += `<div class="goal-card ${cardClass}"><div class="goal-check">${checkContent}</div><div class="goal-info"><div class="goal-name">${goal.icon} ${goal.name}</div><div class="goal-detail">${detail}</div>${extra}</div>${actions}</div>`;
   }
 
-  html += `</div>`;
+  html += '</div>';
 
   if (!dayData.submitted) {
-    // Check if all applicable goals are marked
-    const applicableGoals = GOALS.filter(g => isGoalApplicable(g, today));
-    const allMarked = applicableGoals.every(g => dayData.goals[g.id] && dayData.goals[g.id] !== 'pending');
-    html += `<button class="submit-btn" id="submitBtn" onclick="submitDay()" ${allMarked ? '' : 'disabled'}>
-      ${allMarked ? 'LOCK IN TODAY' : 'MARK ALL GOALS FIRST'}
-    </button>`;
+    const applicable = GOALS.filter(g => isGoalApplicable(g, today));
+    const allMarked = applicable.every(g => dayData.goals[g.id] && dayData.goals[g.id] !== 'pending');
+    html += `<button class="submit-btn" onclick="submitDay()" ${allMarked ? '' : 'disabled'}>${allMarked ? 'LOCK IN TODAY' : 'MARK ALL GOALS FIRST'}</button>`;
   }
 
   container.innerHTML = html;
@@ -995,9 +581,11 @@ function renderToday(today, inSummer) {
 
 function renderPunishments() {
   const container = document.getElementById('punishmentsList');
-  const active = state.activePunishments.filter(p => !p.completed);
+  const punishments = appState.activePunishments || [];
+  const active = punishments.filter(p => !p.completed);
+  const completed = punishments.filter(p => p.completed);
 
-  if (active.length === 0) {
+  if (active.length === 0 && completed.length === 0) {
     container.innerHTML = `<div class="no-punishments">🎯 NO ACTIVE PUNISHMENTS<br><br>Stay disciplined.</div>`;
     return;
   }
@@ -1007,202 +595,132 @@ function renderPunishments() {
     const punish = PUNISHMENTS.find(p => p.id === ap.punishmentId);
     const goal = GOALS.find(g => g.id === ap.goalId);
     if (!punish || !goal) continue;
-    html += `
-      <div class="punishment-card">
-        <div class="punishment-icon">${punish.icon}</div>
-        <div class="punishment-info">
-          <div class="punishment-title">${punish.name}</div>
-          <div class="punishment-source">${punish.desc}</div>
-          <div class="punishment-for">FOR FAILING: ${goal.name} on ${formatDate(ap.forDate)}</div>
-        </div>
-        <button class="btn-complete-punishment" onclick="completePunishment('${ap.id}')">DONE</button>
-      </div>`;
+    html += `<div class="punishment-card"><div class="punishment-icon">${punish.icon}</div><div class="punishment-info"><div class="punishment-title">${punish.name}</div><div class="punishment-source">${punish.desc}</div><div class="punishment-for">FOR FAILING: ${goal.name} on ${formatDate(ap.forDate)}</div></div><button class="btn-complete-punishment" onclick="completePunishment('${ap.id}')">DONE</button></div>`;
   }
 
-  // Completed punishments
-  const completed = state.activePunishments.filter(p => p.completed);
   if (completed.length > 0) {
     html += `<div class="section-title" style="margin-top:16px">COMPLETED</div>`;
     for (const ap of completed.slice(-5)) {
       const punish = PUNISHMENTS.find(p => p.id === ap.punishmentId);
       if (!punish) continue;
-      html += `
-        <div class="punishment-card" style="opacity:0.4">
-          <div class="punishment-icon">${punish.icon}</div>
-          <div class="punishment-info">
-            <div class="punishment-title" style="text-decoration:line-through">${punish.name}</div>
-            <div class="punishment-for">COMPLETED ✓</div>
-          </div>
-        </div>`;
+      html += `<div class="punishment-card" style="opacity:0.4"><div class="punishment-icon">${punish.icon}</div><div class="punishment-info"><div class="punishment-title" style="text-decoration:line-through">${punish.name}</div><div class="punishment-for">COMPLETED ✓</div></div></div>`;
     }
   }
 
+  if (active.length === 0) html = `<div class="no-punishments">🎯 NO ACTIVE PUNISHMENTS<br><br>Stay disciplined.</div>` + html;
   container.innerHTML = html;
 }
 
 function renderHistory() {
   const container = document.getElementById('historyList');
-  const days = Object.keys(state.days)
-    .filter(d => state.days[d].submitted && isInSummer(d))
-    .sort()
-    .reverse();
+  const days = Object.keys(appState.days)
+    .filter(d => appState.days[d].submitted && isInSummer(d))
+    .sort().reverse();
 
-  if (days.length === 0) {
-    container.innerHTML = `<div class="empty-history">NO DAYS LOGGED YET</div>`;
-    return;
-  }
+  if (days.length === 0) { container.innerHTML = `<div class="empty-history">NO DAYS LOGGED YET</div>`; return; }
 
   let html = '';
   for (const d of days) {
-    const dayData = state.days[d];
-    const applicableGoals = GOALS.filter(g => isGoalApplicable(g, d));
-    const pass = applicableGoals.filter(g => dayData.goals[g.id] === 'pass').length;
-    const fail = applicableGoals.filter(g => dayData.goals[g.id] === 'fail').length;
-    const total = applicableGoals.length;
-    const pct = Math.round((pass / total) * 100);
-
-    let dots = '';
-    for (const g of GOALS) {
-      const applicable = isGoalApplicable(g, d);
-      const status = dayData.goals[g.id] || 'pending';
-      let cls = applicable ? (status === 'pass' ? 'pass' : status === 'fail' ? 'fail' : '') : 'na';
-      dots += `<div class="score-dot ${cls}" title="${g.name}"></div>`;
-    }
-
-    html += `
-      <div class="history-item">
-        <div>
-          <div class="history-date">${formatDate(d)}</div>
-          <div class="goal-detail" style="margin-top:3px">Day ${getSummerDay(d)} · ${pass}/${total} goals</div>
-        </div>
-        <div class="history-score">
-          <div class="score-dots">${dots}</div>
-          <div class="history-pct">${pct}%</div>
-        </div>
-      </div>`;
+    const g = appState.days[d].goals || {};
+    const applicable = GOALS.filter(goal => isGoalApplicable(goal, d));
+    const pass = applicable.filter(goal => g[goal.id] === 'pass').length;
+    const pct = Math.round((pass / applicable.length) * 100);
+    const dots = GOALS.map(goal => {
+      const app = isGoalApplicable(goal, d);
+      const st = g[goal.id] || 'pending';
+      const cls = app ? (st==='pass'?'pass':st==='fail'?'fail':'') : 'na';
+      return `<div class="score-dot ${cls}" title="${goal.name}"></div>`;
+    }).join('');
+    html += `<div class="history-item"><div><div class="history-date">${formatDate(d)}</div><div class="goal-detail" style="margin-top:3px">Day ${getSummerDay(d)} · ${pass}/${applicable.length} goals</div></div><div class="history-score"><div class="score-dots">${dots}</div><div class="history-pct">${pct}%</div></div></div>`;
   }
-
   container.innerHTML = html;
 }
 
 // ============ ACTIONS ============
-function markGoal(goalId, status) {
+window.markGoal = (goalId, status) => {
   const today = todayStr();
   const dayData = getDayData(today);
   if (dayData.submitted) return;
   dayData.goals[goalId] = status;
-  saveState();
+  saveUserData();
   renderToday(today, isInSummer(today));
-}
+};
 
-function updateSavings(val) {
-  state.totalSaved = Math.max(0, Math.min(4000, parseFloat(val) || 0));
-  saveState();
-}
+window.updateSavings = (val) => {
+  appState.totalSaved = Math.max(0, Math.min(4000, parseFloat(val) || 0));
+  saveUserData();
+};
 
-function submitDay() {
+window.submitDay = () => {
   const today = todayStr();
   const dayData = getDayData(today);
-  const applicableGoals = GOALS.filter(g => isGoalApplicable(g, today));
-  const allMarked = applicableGoals.every(g => dayData.goals[g.id] && dayData.goals[g.id] !== 'pending');
-  if (!allMarked) return;
+  const applicable = GOALS.filter(g => isGoalApplicable(g, today));
+  if (!applicable.every(g => dayData.goals[g.id] && dayData.goals[g.id] !== 'pending')) return;
 
   dayData.submitted = true;
-
-  // Assign punishments for failed goals
-  const failedGoals = applicableGoals.filter(g => dayData.goals[g.id] === 'fail');
-  const assignedPunishments = [];
+  const failedGoals = applicable.filter(g => dayData.goals[g.id] === 'fail');
+  const assigned = [];
 
   for (const goal of failedGoals) {
-    const usedIds = state.activePunishments.filter(p => !p.completed).map(p => p.punishmentId);
+    const usedIds = (appState.activePunishments || []).filter(p => !p.completed).map(p => p.punishmentId);
     const punishment = randomPunishment(usedIds);
-    const ap = {
-      id: `${today}-${goal.id}-${Date.now()}`,
-      punishmentId: punishment.id,
-      goalId: goal.id,
-      forDate: today,
-      assignedDate: today,
-      completed: false
-    };
-    state.activePunishments.push(ap);
-    assignedPunishments.push({ goal, punishment });
+    const ap = { id:`${today}-${goal.id}-${Date.now()}`, punishmentId:punishment.id, goalId:goal.id, forDate:today, assignedDate:today, completed:false };
+    if (!appState.activePunishments) appState.activePunishments = [];
+    appState.activePunishments.push(ap);
+    assigned.push({ goal, punishment });
   }
 
-  saveState();
-
-  // Show review modal
-  showReviewModal(today, failedGoals, assignedPunishments, applicableGoals);
+  saveUserData();
+  showReviewModal(today, failedGoals, assigned, applicable);
   render();
-}
+};
 
-function completePunishment(apId) {
-  const ap = state.activePunishments.find(p => p.id === apId);
-  if (ap) { ap.completed = true; saveState(); render(); }
-}
+window.completePunishment = (apId) => {
+  const ap = (appState.activePunishments || []).find(p => p.id === apId);
+  if (ap) { ap.completed = true; saveUserData(); render(); }
+};
 
-// ============ MODALS ============
-function showReviewModal(today, failedGoals, assignedPunishments, applicableGoals) {
-  const pass = applicableGoals.length - failedGoals.length;
-  const total = applicableGoals.length;
+// ============ MODAL ============
+function showReviewModal(today, failedGoals, assigned, applicable) {
+  const pass = applicable.length - failedGoals.length;
   const perfect = failedGoals.length === 0;
-
-  document.getElementById('reviewTitle').textContent = perfect ? '🔥 PERFECT DAY' : `DAY COMPLETE`;
+  document.getElementById('reviewTitle').textContent = perfect ? '🔥 PERFECT DAY' : 'DAY COMPLETE';
   document.getElementById('reviewSubtitle').textContent = perfect
-    ? `${pass}/${total} goals crushed. Keep that streak alive.`
-    : `${pass}/${total} goals met. ${failedGoals.length} failure${failedGoals.length > 1 ? 's' : ''}.`;
+    ? `${pass}/${applicable.length} goals crushed. Keep that streak alive.`
+    : `${pass}/${applicable.length} goals met. ${failedGoals.length} failure${failedGoals.length>1?'s':''} assigned.`;
 
-  let detailsHtml = '';
-  if (assignedPunishments.length > 0) {
-    detailsHtml += `<div class="section-title" style="margin-bottom:10px">PUNISHMENTS ASSIGNED</div>`;
-    for (const { goal, punishment } of assignedPunishments) {
-      detailsHtml += `
-        <div class="punishment-card" style="margin-bottom:8px">
-          <div class="punishment-icon">${punishment.icon}</div>
-          <div class="punishment-info">
-            <div class="punishment-title">${punishment.name}</div>
-            <div class="punishment-for">FOR FAILING: ${goal.name}</div>
-          </div>
-        </div>`;
+  let html = '';
+  if (assigned.length > 0) {
+    html += `<div class="section-title" style="margin-bottom:10px">PUNISHMENTS ASSIGNED</div>`;
+    for (const {goal, punishment} of assigned) {
+      html += `<div class="punishment-card" style="margin-bottom:8px"><div class="punishment-icon">${punishment.icon}</div><div class="punishment-info"><div class="punishment-title">${punishment.name}</div><div class="punishment-for">FOR FAILING: ${goal.name}</div></div></div>`;
     }
   }
-  document.getElementById('reviewDetails').innerHTML = detailsHtml;
-
+  document.getElementById('reviewDetails').innerHTML = html;
   document.getElementById('reviewModal').classList.add('active');
 }
 
-function closeReviewModal() {
-  document.getElementById('reviewModal').classList.remove('active');
-}
+window.closeReviewModal = () => document.getElementById('reviewModal').classList.remove('active');
 
-function closeModal() {
-  document.getElementById('failModal').classList.remove('active');
-}
+document.getElementById('reviewModal').addEventListener('click', function(e) {
+  if (e.target === this) window.closeReviewModal();
+});
 
 // ============ TABS ============
-function switchTab(tab) {
-  document.querySelectorAll('.tab').forEach((t, i) => {
-    const tabs = ['today', 'punishments', 'history'];
-    t.classList.toggle('active', tabs[i] === tab);
-  });
+window.switchTab = (tab) => {
+  const tabs = ['today','punishments','history'];
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', tabs[i]===tab));
   document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
   document.getElementById(`tab-${tab}`).classList.add('active');
-}
+};
 
-// Close modals on overlay click
-document.getElementById('failModal').addEventListener('click', function(e) {
-  if (e.target === this) closeModal();
-});
-document.getElementById('reviewModal').addEventListener('click', function(e) {
-  if (e.target === this) closeReviewModal();
-});
-
-// ============ INIT ============
-render();
-
-// Service Worker registration
+// Service Worker
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js').catch(() => {});
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
 }
+
+// Start on login screen until auth resolves
+showScreen('login');
 </script>
 </body>
 </html>
