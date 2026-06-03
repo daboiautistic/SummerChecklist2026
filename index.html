@@ -377,7 +377,13 @@ let appState = { days: {}, totalSaved: 0, activePunishments: [] };
 let unsubscribe = null;
 
 // ============ HELPERS ============
-const todayStr = () => new Date().toISOString().split('T')[0];
+const todayStr = () => {
+  const now = new Date();
+  const chicagoTime = new Date(now.toLocaleString('en-US', { timeZone: 'America/Chicago' }));
+  // Subtract 1 hour so the day rolls over at 1am Chicago time instead of midnight
+  chicagoTime.setHours(chicagoTime.getHours() - 1);
+  return chicagoTime.toISOString().split('T')[0];
+};
 const parseDateStr = s => new Date(s + 'T00:00:00');
 const isWeekday = s => { const d = parseDateStr(s).getDay(); return d !== 0 && d !== 6; };
 const isInSummer = s => { const d = parseDateStr(s); return d >= SUMMER_START && d < SUMMER_END; };
